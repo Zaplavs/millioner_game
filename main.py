@@ -3,7 +3,8 @@ import logging
 import sys
 
 from aiogram import Bot, Dispatcher
-from config import BOT_TOKEN
+from aiogram.client.session.aiohttp import AiohttpSession
+from config import BOT_TOKEN, PROXY_URL
 from handlers import router
 
 # Initialize dispatcher
@@ -19,8 +20,13 @@ async def main() -> None:
         logging.error("BOT_TOKEN is not set. Please check your .env file.")
         sys.exit(1)
 
-    # Initialize Bot instance with a default parse mode which will be passed to all API calls
-    bot = Bot(token=BOT_TOKEN)
+    session = None
+    if PROXY_URL:
+        logging.info(f"Using proxy: {PROXY_URL}")
+        session = AiohttpSession(proxy=PROXY_URL)
+
+    # Initialize Bot instance
+    bot = Bot(token=BOT_TOKEN, session=session)
 
     # And the run events dispatching
     logging.info("Starting bot...")
