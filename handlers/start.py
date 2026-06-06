@@ -1,6 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters import CommandStart
 from keyboards.inline import get_start_keyboard
+from database.db import add_user
 
 router = Router()
 
@@ -9,6 +10,12 @@ async def command_start_handler(message: types.Message) -> None:
     """
     This handler receives messages with `/start` command
     """
+    await add_user(
+        telegram_id=message.from_user.id,
+        username=message.from_user.username,
+        full_name=message.from_user.full_name
+    )
+
     user_name = message.from_user.full_name
 
     greeting_text = (
