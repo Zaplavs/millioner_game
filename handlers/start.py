@@ -1,7 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters import CommandStart
-from keyboards.inline import get_start_keyboard
-from database.db import add_user
+from keyboards.reply import get_main_menu_keyboard
+from database import add_user
 
 router = Router()
 
@@ -27,6 +27,6 @@ async def command_start_handler(message: types.Message) -> None:
 
     await message.answer(
         greeting_text,
-        reply_markup=get_start_keyboard(),
+        reply_markup=get_main_menu_keyboard(),
         parse_mode="HTML"
     )
