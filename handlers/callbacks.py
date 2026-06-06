@@ -1,11 +1,12 @@
 from aiogram import Router, F, types
+from database import get_user_profile
 
 router = Router()
 
-@router.callback_query(F.data == "rules")
-async def rules_handler(callback: types.CallbackQuery) -> None:
+@router.message(F.text == "📜 Правила")
+async def rules_handler(message: types.Message) -> None:
     """
-    Handler for the 'Rules' button
+    Handler for the 'Rules' button in ReplyKeyboardMarkup
     """
     rules_text = (
         "📜 <b>Правила игры:</b>\n\n"
@@ -16,21 +17,31 @@ async def rules_handler(callback: types.CallbackQuery) -> None:
         "Удачи!"
     )
 
-    await callback.message.answer(rules_text, parse_mode="HTML")
-    await callback.answer()
+    await message.answer(rules_text, parse_mode="HTML")
 
 
-@router.callback_query(F.data == "leaderboard")
-async def leaderboard_handler(callback: types.CallbackQuery) -> None:
+@router.message(F.text == "🏆 Таблица лидеров")
+async def leaderboard_handler(message: types.Message) -> None:
     """
-    Handler for the 'Leaderboard' button
+    Handler for the 'Leaderboard' button in ReplyKeyboardMarkup
     """
-    await callback.answer("Раздел в разработке", show_alert=True)
+    await message.answer("Раздел в разработке")
 
 
-@router.callback_query(F.data == "play")
-async def play_handler(callback: types.CallbackQuery) -> None:
+@router.message(F.text == "👤 Профиль")
+async def profile_handler(message: types.Message) -> None:
     """
-    Placeholder handler for the 'Play' button
+    Handler for the 'Profile' button in ReplyKeyboardMarkup
     """
-    await callback.answer("Игра скоро начнется!", show_alert=True)
+    user_data = await get_user_profile(message.from_user.id)
+    if user_data:
+        full_name, games_played, max_win = user_data
+        profile_text = (
+            f"👤 <b>Профиль:</b> {full_name}\n"
+            f"🎮 <b>Сыграно игр:</b> {games_played}\n"
+            f"💰 <b>Максимальный выигрыш:</b> {max_win}"
+        )
+    else:
+        profile_text = "Профиль не найден. Пожалуйста, введите /start"
+
+    await message.answer(profile_text, parse_mode="HTML")

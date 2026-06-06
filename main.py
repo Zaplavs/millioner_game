@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
 from config import BOT_TOKEN, PROXY_URL
 from handlers import router
-from database.db import init_db
+from database import init_db, init_questions_db
 
 # Initialize dispatcher
 dp = Dispatcher()
@@ -31,6 +31,7 @@ async def main() -> None:
 
     # Initialize the database
     await init_db()
+    await init_questions_db()
 
     # And the run events dispatching
     logging.info("Starting bot...")
